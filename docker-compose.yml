@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  rust-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - ORDER_ID=${ORDER_ID}
+    ports:
+      - "3000:3000"
