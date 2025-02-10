@@ -3,7 +3,7 @@ use serde_json::{json, Value};
 use std::{env, thread, time};
 
 const API_ADDRESS: &str = "https://azure-cn.orangeconnex.com/oc/capricorn-website/website/v1/tracking/traces";
-const SLEEP_SECONDS: u64 = 5;
+const SLEEP_SECONDS: u64 = 600;
 
 /*
     FUNCTIONS
