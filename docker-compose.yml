@@ -10,5 +10,4 @@ services:
       - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
       - ORDER_ID=${ORDER_ID}
       - SLEEP_TIME=600
-    ports:
-      - "3000:3000"
+
