@@ -3,7 +3,6 @@ use serde_json::{json, Value};
 use std::{env, thread, time};
 
 const API_ADDRESS: &str = "https://azure-cn.orangeconnex.com/oc/capricorn-website/website/v1/tracking/traces";
-const SLEEP_SECONDS: u64 = 600;
 
 /*
     FUNCTIONS
@@ -45,6 +44,8 @@ async fn main() -> Result<(), Error>  {
     let bot_token = env::var("TELEGRAM_BOT_TOKEN").expect("Missing env variable TELEGRAM_BOT_TOKEN");
     let chat_id = env::var("TELEGRAM_CHAT_ID").expect("Missing env variable TELEGRAM_CHAT_ID");
     let order_id = env::var("ORDER_ID").expect("Missing env variable ORDER_ID");
+    let sleep_time_str = env::var("SLEEP_TIME").expect("Missing env variable SLEEP_TIME");
+    let sleep_time = sleep_time_str.parse().expect("Failed to parse SLEEP_TIME in integer");
 
     println!("-- Start --");
     let http_client = Client::new();
@@ -52,8 +53,8 @@ async fn main() -> Result<(), Error>  {
     let mut last_status: String = String::from("");
 
     loop {
-        println!("-- Sleep for {:?} seconds --", SLEEP_SECONDS);
-        thread::sleep(time::Duration::from_secs(SLEEP_SECONDS));
+        println!("-- Sleep for {:?} seconds --", sleep_time);
+        thread::sleep(time::Duration::from_secs(sleep_time));
         let params = json!({
             "trackingNumbers": order_id,
             "language": "en-US",
@@ -84,7 +85,20 @@ async fn main() -> Result<(), Error>  {
             let mut message = format!("Status : {}\nHistory : \n", &package_info["lastStatus"].as_str().unwrap());
             let traces = package_info["traces"].as_array().unwrap().clone();
             for trace in traces {
-                message = format!("{} \t - {} : {}\n", message, &trace["eventDesc"].as_str().unwrap(),&trace["oprTime"].as_str().unwrap());
+                let mut trace_formated: String = String::from("");
+                match &trace {
+                    Value::Object(map) => {
+                        if map.contains_key("oprCountry") {
+                            trace_formated = format!("{} : {} ({}, {})", 
+                                &trace["eventDesc"].as_str().unwrap(),&trace["oprTime"].as_str().unwrap(),
+                                &trace["oprCity"].as_str().unwrap(),&trace["oprCountry"].as_str().unwrap());
+                        } else {
+                            trace_formated = format!("{} : {}", &trace["eventDesc"].as_str().unwrap(),&trace["oprTime"].as_str().unwrap());
+                        }
+                    }
+                    _ => println!("The value is not an object."),
+                }
+                message = format!("{} \t - {}\n", message, trace_formated);
             }
             println!("{}", message);
             send_telegram_message(&bot_token, &chat_id, &message).await.unwrap();
