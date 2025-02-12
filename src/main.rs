@@ -52,13 +52,12 @@ async fn main() -> Result<(), Error>  {
 
     let mut last_status: String = String::from("");
 
+    let params = json!({
+        "trackingNumbers": order_id,
+        "language": "en-US",
+    });
+
     loop {
-        println!("-- Sleep for {:?} seconds --", sleep_time);
-        thread::sleep(time::Duration::from_secs(sleep_time));
-        let params = json!({
-            "trackingNumbers": order_id,
-            "language": "en-US",
-        });
 
         let response = http_client.post(API_ADDRESS)
             .header("Content-Type", "application/json")
@@ -108,6 +107,8 @@ async fn main() -> Result<(), Error>  {
             println!("{}", message);
             send_telegram_message(&bot_token, &chat_id, &message).await.unwrap();
         }
+        println!("-- Sleep for {:?} seconds --", sleep_time);
+        thread::sleep(time::Duration::from_secs(sleep_time));
     }
     
 }
