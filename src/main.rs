@@ -88,7 +88,7 @@ async fn main() -> Result<(), Error>  {
                 let mut trace_formated: String = String::from("");
                 match &trace {
                     Value::Object(map) => {
-                        if map.contains_key("oprCountry") {
+                        if map.contains_key("oprCountry") && map.contains_key("oprCity") {
                             trace_formated = format!("{} : {} ({}, {})", 
                                 &trace["eventDesc"].as_str().unwrap(),&trace["oprTime"].as_str().unwrap(),
                                 &trace["oprCity"].as_str().unwrap(),&trace["oprCountry"].as_str().unwrap());
