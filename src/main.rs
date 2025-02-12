@@ -92,6 +92,11 @@ async fn main() -> Result<(), Error>  {
                             trace_formated = format!("{} : {} ({}, {})", 
                                 &trace["eventDesc"].as_str().unwrap(),&trace["oprTime"].as_str().unwrap(),
                                 &trace["oprCity"].as_str().unwrap(),&trace["oprCountry"].as_str().unwrap());
+                        } else if map.contains_key("oprCountry") && !  map.contains_key("oprCity") {
+                            trace_formated = format!("{} : {} ({})", 
+                                &trace["eventDesc"].as_str().unwrap(),&trace["oprTime"].as_str().unwrap(),
+                                &trace["oprCountry"].as_str().unwrap());
+
                         } else {
                             trace_formated = format!("{} : {}", &trace["eventDesc"].as_str().unwrap(),&trace["oprTime"].as_str().unwrap());
                         }
